@@ -50,21 +50,14 @@ import com.qualcomm.robotcore.util.Range;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="TileRunner Test", group="Testing")
-//@Disabled
-public class Linear_TileRunner_Test extends LinearOpMode {
+@TeleOp(name="Basic: Linear OpMode", group="Linear Opmode")
+@Disabled
+public class BergMotorProgram1 extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor leftDriveFirst = null;
-    private DcMotor leftDriveSecond = null;
-    private DcMotor rightDriveFirst = null;
-    private DcMotor rightDriveSecond = null;
-
-    private final static String LEFT_MOTOR1 = "left_drive";
-    private final static String LEFT_MOTOR2 = "left_drive2";
-    private final static String RIGHT_MOTOR1 = "right_drive";
-    private final static String RIGHT_MOTOR2 = "right_drive2";
+    private DcMotor leftDrive = null;
+    private DcMotor rightDrive = null;
 
     @Override
     public void runOpMode() {
@@ -74,22 +67,13 @@ public class Linear_TileRunner_Test extends LinearOpMode {
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
-        leftDriveFirst  = hardwareMap.get(DcMotor.class,  LEFT_MOTOR1);
-        leftDriveSecond  = hardwareMap.get(DcMotor.class,  LEFT_MOTOR2);
-        rightDriveFirst = hardwareMap.get(DcMotor.class, RIGHT_MOTOR1);
-        rightDriveSecond = hardwareMap.get(DcMotor.class, RIGHT_MOTOR2);
+        leftDrive  = hardwareMap.get(DcMotor.class, "left_drive");
+        rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
-        leftDriveFirst.setDirection(DcMotor.Direction.FORWARD);
-        leftDriveSecond.setDirection(DcMotor.Direction.FORWARD);
-        rightDriveFirst.setDirection(DcMotor.Direction.REVERSE);
-        rightDriveSecond.setDirection(DcMotor.Direction.REVERSE);
-
-        leftDriveFirst.setPower(0);
-        leftDriveSecond.setPower(0);
-        rightDriveFirst.setPower(0);
-        rightDriveSecond.setPower(0);
+        leftDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightDrive.setDirection(DcMotor.Direction.REVERSE);
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -118,15 +102,12 @@ public class Linear_TileRunner_Test extends LinearOpMode {
             // rightPower = -gamepad1.right_stick_y ;
 
             // Send calculated power to wheels
-            leftDriveFirst.setPower(leftPower);
-            leftDriveSecond.setPower(leftPower);
-            rightDriveFirst.setPower(rightPower);
-            rightDriveSecond.setPower(rightPower);
+            leftDrive.setPower(leftPower);
+            rightDrive.setPower(rightPower);
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
-            telemetry.addData("Controller", "left (%.2f), right (%.2f)", gamepad1.left_stick_y, gamepad1.right_stick_x);
             telemetry.update();
         }
     }

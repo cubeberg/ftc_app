@@ -50,21 +50,16 @@ import com.qualcomm.robotcore.util.Range;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="TileRunner Test", group="Testing")
+@TeleOp(name="Testing: Motor Timed", group="Linear Opmode")
 //@Disabled
-public class Linear_TileRunner_Test extends LinearOpMode {
+public class MotorTimeTest_Linear extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor leftDriveFirst = null;
-    private DcMotor leftDriveSecond = null;
-    private DcMotor rightDriveFirst = null;
-    private DcMotor rightDriveSecond = null;
-
-    private final static String LEFT_MOTOR1 = "left_drive";
-    private final static String LEFT_MOTOR2 = "left_drive2";
-    private final static String RIGHT_MOTOR1 = "right_drive";
-    private final static String RIGHT_MOTOR2 = "right_drive2";
+    private DcMotor leftDrive = null;
+    private DcMotor leftDrive2 = null;
+    private DcMotor rightDrive = null;
+    private DcMotor rightDrive2 = null;
 
     @Override
     public void runOpMode() {
@@ -74,43 +69,47 @@ public class Linear_TileRunner_Test extends LinearOpMode {
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
-        leftDriveFirst  = hardwareMap.get(DcMotor.class,  LEFT_MOTOR1);
-        leftDriveSecond  = hardwareMap.get(DcMotor.class,  LEFT_MOTOR2);
-        rightDriveFirst = hardwareMap.get(DcMotor.class, RIGHT_MOTOR1);
-        rightDriveSecond = hardwareMap.get(DcMotor.class, RIGHT_MOTOR2);
+        leftDrive  = hardwareMap.get(DcMotor.class, "left_drive");
+        leftDrive2  = hardwareMap.get(DcMotor.class, "left_drive2");
+        rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
+        rightDrive2 = hardwareMap.get(DcMotor.class, "right_drive2");
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
-        leftDriveFirst.setDirection(DcMotor.Direction.FORWARD);
-        leftDriveSecond.setDirection(DcMotor.Direction.FORWARD);
-        rightDriveFirst.setDirection(DcMotor.Direction.REVERSE);
-        rightDriveSecond.setDirection(DcMotor.Direction.REVERSE);
+        leftDrive.setDirection(DcMotor.Direction.FORWARD);
+        leftDrive2.setDirection(DcMotor.Direction.FORWARD);
+        rightDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightDrive2.setDirection(DcMotor.Direction.REVERSE);
 
-        leftDriveFirst.setPower(0);
-        leftDriveSecond.setPower(0);
-        rightDriveFirst.setPower(0);
-        rightDriveSecond.setPower(0);
+/*        leftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftDrive2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightDrive2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftDrive2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightDrive2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);*/
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
 
+        double leftPower = 1;
+        double rightPower = 1;
+
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
             // Setup a variable for each drive wheel to save power level for telemetry
-            double leftPower;
-            double rightPower;
+
 
             // Choose to drive using either Tank Mode, or POV Mode
             // Comment out the method that's not used.  The default below is POV.
 
             // POV Mode uses left stick to go forward, and right stick to turn.
             // - This uses basic math to combine motions and is easier to drive straight.
-            double drive = -gamepad1.left_stick_y;
-            double turn  =  gamepad1.right_stick_x;
-            leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
-            rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
+
 
             // Tank Mode uses one stick to control each wheel.
             // - This requires no math, but it is hard to drive forward slowly and keep straight.
@@ -118,16 +117,41 @@ public class Linear_TileRunner_Test extends LinearOpMode {
             // rightPower = -gamepad1.right_stick_y ;
 
             // Send calculated power to wheels
-            leftDriveFirst.setPower(leftPower);
-            leftDriveSecond.setPower(leftPower);
-            rightDriveFirst.setPower(rightPower);
-            rightDriveSecond.setPower(rightPower);
+            leftDrive.setPower(leftPower);
+            leftDrive2.setPower(leftPower);
+            rightDrive.setPower(rightPower);
+            rightDrive2.setPower(rightPower);
+
+            sleep(1000);
+
+            leftPower = leftPower / 2;
+            rightPower = rightPower / 2;
+
+            leftDrive.setPower(leftPower);
+            leftDrive2.setPower(leftPower);
+            rightDrive.setPower(rightPower);
+            rightDrive2.setPower(rightPower);
+
+            sleep(1000);
+
+
+            rightPower = -rightPower;
+
+            leftDrive.setPower(leftPower);
+            leftDrive2.setPower(leftPower);
+            rightDrive.setPower(rightPower);
+            rightDrive2.setPower(rightPower);
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
+            telemetry.addData("StatusTime", "Time: (%.2f)", runtime.time());
             telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
-            telemetry.addData("Controller", "left (%.2f), right (%.2f)", gamepad1.left_stick_y, gamepad1.right_stick_x);
             telemetry.update();
         }
+
+        leftDrive.setPower(0);
+        leftDrive2.setPower(0);
+        rightDrive.setPower(0);
+        rightDrive2.setPower(0);
     }
 }

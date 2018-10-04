@@ -57,8 +57,8 @@ public class K9botTeleopTank_Linear extends LinearOpMode {
 
     /* Declare OpMode members. */
     HardwareK9bot   robot           = new HardwareK9bot();              // Use a K9'shardware
-    double          armPosition     = robot.ARM_HOME;                   // Servo safe position
-    double          clawPosition    = robot.CLAW_HOME;                  // Servo safe position
+    double          armPosition     = HardwareK9bot.ARM_HOME;                   // Servo safe position
+    double          clawPosition    = HardwareK9bot.CLAW_HOME;                  // Servo safe position
     final double    CLAW_SPEED      = 0.01 ;                            // sets rate to move servo
     final double    ARM_SPEED       = 0.01 ;                            // sets rate to move servo
 
