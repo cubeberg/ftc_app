@@ -29,12 +29,12 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
+
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -50,9 +50,9 @@ import com.qualcomm.robotcore.util.Range;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Testing: Motor Timed", group="Linear Opmode")
+@TeleOp(name="Testing: Motor Encoders", group="Linear Opmode")
 //@Disabled
-public class MotorTimeTest_Linear extends LinearOpMode {
+public class MotorEncoderTest_Linear extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
@@ -95,8 +95,8 @@ public class MotorTimeTest_Linear extends LinearOpMode {
         waitForStart();
         runtime.reset();
 
-        double leftPower = 0.5;
-        double rightPower = 0.5;
+        double leftPower = .6;
+        double rightPower = .6;
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -122,31 +122,32 @@ public class MotorTimeTest_Linear extends LinearOpMode {
             rightDrive.setPower(rightPower);
             rightDrive2.setPower(rightPower);
 
-            sleep(1000);
+            while(opModeIsActive())
+            {
+                while(opModeIsActive() && runtime.time(TimeUnit.SECONDS) < 10)
+                {
 
-            leftPower = leftPower / 2;
-            rightPower = rightPower / 2;
+                    telemetry.addData("Encoders L","left1 (%.2f) left2 (%.2f)", leftDrive.getCurrentPosition() + 0.0, leftDrive2.getCurrentPosition() + 0.0);
+                    telemetry.addData("Encoders R","r1 (%.2f) r2 (%.2f)", rightDrive.getCurrentPosition() + 0.0, rightDrive2.getCurrentPosition() + 0.0);
+                    telemetry.update();
+                    sleep(1000);
+                    leftPower -= .1;
+                    rightPower -= .1;
+                    leftDrive.setPower(leftPower);
+                    leftDrive2.setPower(leftPower);
+                    rightDrive.setPower(rightPower);
+                    rightDrive2.setPower(rightPower);
+                }
 
-            leftDrive.setPower(leftPower);
-            leftDrive2.setPower(leftPower);
-            rightDrive.setPower(rightPower);
-            rightDrive2.setPower(rightPower);
+                // Show the elapsed game time and wheel power.
+                telemetry.addData("Status", "Run Time: " + runtime.toString());
+                telemetry.addData("StatusTime", "Time: (%.2f)", runtime.time());
+                telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
 
-            sleep(1000);
+                telemetry.update();
+            }
 
 
-            rightPower = -rightPower;
-
-            leftDrive.setPower(leftPower);
-            leftDrive2.setPower(leftPower);
-            rightDrive.setPower(rightPower);
-            rightDrive2.setPower(rightPower);
-
-            // Show the elapsed game time and wheel power.
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("StatusTime", "Time: (%.2f)", runtime.time());
-            telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
-            telemetry.update();
         }
 
         leftDrive.setPower(0);
